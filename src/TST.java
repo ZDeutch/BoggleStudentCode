@@ -1,31 +1,25 @@
+import org.w3c.dom.Node;
+
 public class TST {
     // Root tracks the current node in the word
     NodeTST root;
 
     public TST() {
         // Initialize the root to the middle of the alphabet
-        root = new NodeTST('m');
+        root = null;
     }
 
     // Method to insert a string into the TST
     public void insert(String s) {
-        // Set the root to the middle of the alphabet
         NodeTST temp = root;
 
-        // For each letter in the word
         for (int i = 0; i < s.length(); i++) {
-            // While the given letter node is not the same as the node being looked at
             while (s.charAt(i) != temp.getCurrent()) {
-
-                // If it is less then insert it to the left of the node
-                // Then set temp to be the left node
                 if (s.charAt(i) < temp.getCurrent()) {
                     if (temp.getLeft() == null) {
                         temp.setLeft(s.charAt(i));
                     }
                     temp = temp.getLeft();
-                    // Otherwise add it to the right side if it is undefined
-                    // Then set temp to be the right node
                 } else {
                     if (temp.getRight() == null) {
                         temp.setRight(s.charAt(i));
@@ -33,48 +27,53 @@ public class TST {
                     temp = temp.getRight();
                 }
             }
-
-            // Lastly, if the middle node is null
-            if (temp.getMiddle() == null) {
-                // Then create a direct dropdown from the node to be the current letter
-                temp.setMiddle(s.charAt(i));
+            if (i < s.length() - 1) {
+                if (temp.getMiddle() == null) {
+                    temp.setMiddle(s.charAt(i));
+                }
+                temp = temp.getMiddle();
             }
         }
-        // Set the last letter to true to mark the end of the word
         temp.setWord(true);
+    }
+
+    public boolean hasPrefix(String s) {
+        if (s == null || s.length() == 0) {
+            return false;
+        }
+        return get(root, s, 0) != null;
     }
 
     // method to find whether a given string is in the TST
     public boolean find(String s) {
-        // Set the root to the temp
-        NodeTST temp = root;
-
-        // For each letter in the word
-        for (int i = 0; i < s.length(); i++) {
-            // If the letter is not the same as the temp, check the left and right node
-            // If those nodes are empty, then the string must not be in the node and can return false
-            while (s.charAt(i) != temp.getCurrent()) {
-                if (s.charAt(i) > temp.getCurrent()) {
-                    if (temp.getRight() == null) {
-                        return false;
-                    }
-                    temp = temp.getRight();
-                } else if (s.charAt(i) < temp.getCurrent()) {
-                    if (temp.getLeft() == null) {
-                        return false;
-                    }
-                    temp = temp.getLeft();
-                }
-            }
-
-            // Also, if the middle is not defined, then you return false because the letter doesn't appear in the TST
-            if (temp.getMiddle() == null) {
-                return false;
-            }
-            temp = temp.getMiddle();
+        if (s == null || s.length() == 0) {
+            return false;
         }
-        // Otherwise return true
-        return true;
+
+        NodeTST node = get(root, s, 0);
+        return node != null && node.isWord;
+    }
+
+    public NodeTST get(NodeTST node, String s, int d) {
+        if (node == null) {
+            return null;
+        }
+
+        if (d >= s.length()) {
+            return null;
+        }
+
+        char c = s.charAt(d);
+
+        if (c < node.getCurrent()) {
+            return get(node.getLeft(), s, 0);
+        } else if (c > node.getCurrent()) {
+            return get(node.getRight(), s, 0);
+        } else if (d < s.length() - 1) {
+            return get(node.getMiddle(), s, d + 1);
+        } else {
+            return node;
+        }
     }
 
 

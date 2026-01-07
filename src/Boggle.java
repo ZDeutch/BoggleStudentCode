@@ -13,10 +13,10 @@ public class Boggle {
         }
 
         ArrayList<String> foundWords = new ArrayList<>();
-        boolean[][] visited = new boolean[board.length][board[0].length];
 
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board[0].length; j++) {
+                boolean[][] visited = new boolean[board.length][board[0].length];
                 DFS(board, i, j, "", visited, tst, foundWords);
             }
         }
@@ -38,7 +38,7 @@ public class Boggle {
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[0].length; j++) {
                 if (grid[i][j] == '1') {
-                    DFS(grid, i, j, "", visited, tst, foundWords);
+                    IslandDFS(grid, i, j);
                     count++;
                 }
             }
@@ -46,7 +46,7 @@ public class Boggle {
         return count;
     }
 
-    public static void DFS(char[][] grid, int i, int j, String current, boolean[][] visited, TST tst, ArrayList<String> goodWords) {
+    public static void IslandDFS(char[][] grid, int i, int j) {
         if (i < 0 || j < 0 || i >= grid.length || j >= grid[0].length) {
             return;
         }
@@ -55,7 +55,30 @@ public class Boggle {
             return;
         }
 
+        grid[i][j] = '0';
+
+        IslandDFS(grid, i - 1, j);
+        IslandDFS(grid, i + 1, j);
+        IslandDFS(grid, i, j + 1);
+        IslandDFS(grid, i, j - 1);
+    }
+    public static void DFS(char[][] grid, int i, int j, String current, boolean[][] visited, TST tst, ArrayList<String> goodWords) {
+        if (i < 0 || j < 0 || i >= grid.length || j >= grid[0].length) {
+            return;
+        }
+
+        if (grid[i][j] == '0') {
+            return;
+        }
+        if(visited[i][j]) {
+            return;
+        }
+
         String newWord = current + grid[i][j];
+
+        if(!tst.hasPrefix(newWord)) {
+            return;
+        }
 
         visited[i][j] = true;
 
