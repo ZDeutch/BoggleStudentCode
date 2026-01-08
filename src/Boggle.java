@@ -1,6 +1,8 @@
 import java.util.ArrayList;
 import java.util.Arrays;
 
+// Boggle by Zander Deutch
+
 public class Boggle {
 
     public static String[] findWords(char[][] board, String[] dictionary) {
