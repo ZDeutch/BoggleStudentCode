@@ -7,13 +7,13 @@ public class Boggle {
 
     public static String[] findWords(char[][] board, String[] dictionary) {
 
-        ArrayList<String> goodWords = new ArrayList<String>();
+        ArrayList<String> goodWords = new ArrayList<>();
 
-        // Build a TST to store all of the words in dictionary
+        // Build a TST to store all the words in dictionary
 
         TST tst = new TST();
-        for (int i = 0; i < dictionary.length; i++) {
-            tst.insert(dictionary[i]);
+        for (String s : dictionary) {
+            tst.insert(s);
         }
 
         // Use temp arrayList to manipulate the words that are found
@@ -27,10 +27,8 @@ public class Boggle {
             }
         }
 
-        // Remove duplicates - a word might be formable from multiple starting positions
-        for (int i = 0; i < foundWords.size(); i++) {
-            goodWords.add(foundWords.get(i));
-        }
+        // Remove duplicates - a word might be formed from multiple starting positions
+        goodWords.addAll(foundWords);
 
 
         // Convert the list into a sorted array of strings, then return the array.
@@ -42,7 +40,7 @@ public class Boggle {
 
     // Depth-First Search to find words on the boggle board
     // Uses backtracking to explore all possible paths
-    public static void DFS(char[][] grid, int i, int j, String current, boolean[][] visited, TST tst, ArrayList<String> goodWords) {
+    public static void DFS(char[][] grid, int i, int j, String current, boolean[][] visited, TST tst, ArrayList<String> foundWords) {
         // Base Case 1 is if any of the coordinates are out of bounds for the board
         if (i < 0 || j < 0 || i >= grid.length || j >= grid[0].length) {
             return;
@@ -66,16 +64,16 @@ public class Boggle {
 
         // If the current word is in dictionary then add to results
         if (tst.find(newWord)) {
-            if (!goodWords.contains(newWord)) {
-                goodWords.add(newWord);
+            if (!foundWords.contains(newWord)) {
+                foundWords.add(newWord);
             }
         }
 
         // Recursively explore all 4 adjacent directions
-        DFS(grid, i - 1, j, newWord, visited, tst, goodWords);
-        DFS(grid, i + 1, j, newWord, visited, tst, goodWords);
-        DFS(grid, i, j - 1, newWord, visited, tst, goodWords);
-        DFS(grid, i, j + 1, newWord, visited, tst, goodWords);
+        DFS(grid, i - 1, j, newWord, visited, tst, foundWords);
+        DFS(grid, i + 1, j, newWord, visited, tst, foundWords);
+        DFS(grid, i, j - 1, newWord, visited, tst, foundWords);
+        DFS(grid, i, j + 1, newWord, visited, tst, foundWords);
 
         // Unmark cell so other paths can use it
         visited[i][j] = false;
